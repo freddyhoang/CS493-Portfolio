@@ -1,0 +1,49 @@
+<!doctype html>
+
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>FitnessTracker API information Page</title>
+</head>
+<body>
+    
+    <div class="container">
+        <h3>API info here:</h3>
+        <p>Following endpoints for API usage:</p>
+
+        <p>Post + get allowed for the following endpoints:</p>
+        <ul>
+            <li>/dates</li>
+            <li>/meals</li>
+            <li>/foods</li>
+        </ul>
+
+        <p>Delete + get + put allowed for the following endpoints:</p>
+        <ul>
+            <li>/dates/dates_id</li>
+            <li>/meals/meals_id</li>
+            <li>/foods/foods_id</li>
+        </ul>
+
+        <p>Patch + delete allowed for the following endpoints:</p>
+        <ul>
+            <li>/dates/dates_id/meals_id</li>
+            <li>/meals/meals_id/foods_id</li>
+        </ul>
+
+        <p>Get allowed for the following endpoints:</p>
+        <ul>
+            <li>/dates/dates_id/meals</li>
+            <li>/meals/meals_id/dates</li>
+            <li>/meals/meals_id/foods</li>
+            <li>/foods/foods_id/meals</li>
+            <li>/users</li>
+        </ul>
+
+        <p>Click the button below to get redirected to the home page for oAuth account creation/login!</p>
+        <a class="btn btn-primary btn-lg" href="/home">Click here to read about how to login or create an account</a>
+
+    </div>
+
+</body>
+</html>

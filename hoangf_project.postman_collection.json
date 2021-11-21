@@ -1,0 +1,3881 @@
+{
+	"info": {
+		"_postman_id": "c2ffaa28-46f8-45e7-9b1a-b61586f19ce7",
+		"name": "FitnessTracker",
+		"description": "This collection tests the API specification given for FitnessTracker.\nIn order to run this collection, you need an environment which has the following 6 environment variables pre-defined:\n\nid_token [for the FitnessTracker collection]\n- first run \"RUN LOGIN FIRST\" and take that id_token and set it in our FitnessTracker collection as a variable\n\napp_url\n- Set this to your application\n\ninvalid_food_id\n- Set it to some random number, i.e. 1111\n\ninvalid_meal_id\n- Set it to some random number, i.e. 1111\n\ninvalid_date_id\n- Set it to some random number, i.e. 1111\n\nid_token_invalid\n- Set it to some random number, i.e. 1111",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "RUN LOGIN FIRST",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"id_token\", pm.response.json()[\"id_token\"]);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"{{user_id_1}}\",\r\n    \"password\": \"test@123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{app_url}}/logintest",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"logintest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add dates 201",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"date_id\", pm.response.json()[\"id\"]);",
+							"",
+							"pm.test(\"201 status code\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"date\"]).to.eq(\"11/15/21\");",
+							"    const self_url = pm.environment.get(\"app_url\") + \"dates/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"month\": 11,\r\n  \"day\": 15,\r\n  \"year\": 2021\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/dates",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add dates 201 noAuth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"201 status code\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"month\": 11,\r\n  \"day\": 15,\r\n  \"year\": 2021\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/dates",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add dates 403 - id included",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"403 status code\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"month\": 11,\r\n  \"day\": 15,\r\n  \"year\": 2021,\r\n  \"id\": 2222\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/dates",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT dates 204",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"204 status code\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"month\": 6,\r\n  \"day\": 12,\r\n  \"year\": 2021\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT dates 401 noAuth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"month\": 6,\r\n  \"day\": 12,\r\n  \"year\": 2021\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT dates 401 noAuth Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"403 status code\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"month\": 6,\r\n  \"day\": 12,\r\n  \"year\": 2021,\r\n  \"id\": 2222\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete dates noAuth 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete all dates 405",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"405 status code\", function () {",
+							"    pm.response.to.have.status(405);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{app_url}}/dates",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add dates with missing attributes 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"400 status code\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"400 error message\", function () {",
+							"     pm.expect(pm.response.json()[\"Error\"]).to.eq(\"The request object is missing at least one of the required attributes\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"month\": 11,\r\n  \"day\": 15\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/dates",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get dates with invalid id 404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"404 not found\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"",
+							"pm.test(\"404 error message\", function () {",
+							"     pm.expect(pm.response.json()[\"Error\"]).to.eq(\"No object with this id exists\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates/{{invalid_date_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{invalid_date_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get specific dates 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"date\"]).to.eq(\"06/12/21\");",
+							"    const self_url = pm.environment.get(\"app_url\") + \"dates/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get specific dates noAuth 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all dates 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"At least one date exists\", function(){",
+							"   pm.expect(Object.keys(pm.response.json()).length).to.be.at.least(1);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all dates 200 check pagination",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"At least one date exists\", function(){",
+							"   pm.expect(Object.keys(pm.response.json()).length).to.be.at.least(1);",
+							"   const next_url = pm.environment.get(\"app_url\") + \"dates?limit=5&offset=5\";",
+							"   pm.expect(pm.response.json()[\"next\"]).to.eq(next_url);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add meals 201",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"meal_id\", pm.response.json()[\"id\"]);",
+							"",
+							"pm.test(\"201 status code\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"meal\"]).to.eq(\"breakfast\");",
+							"    pm.expect(pm.response.json()[\"ateWithOthers\"]).to.eq(false);",
+							"    pm.expect(pm.response.json()[\"drankLiquid\"]).to.eq(false);",
+							"    pm.expect(pm.response.json()[\"wasTasty\"]).to.eq(true);",
+							"    pm.expect(pm.response.json()[\"wasHealthy\"]).to.eq(true);",
+							"    const self_url = pm.environment.get(\"app_url\") + \"meals/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"meal\": \"breakfast\",\r\n  \"ateWithOthers\": false,\r\n  \"drankLiquid\": false,\r\n  \"wasTasty\": true, \r\n  \"wasHealthy\": true\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/meals",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete dates 201",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"204 status code\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add meals 201 noAuth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"201 status code\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"meal\": \"breakfast\",\r\n  \"ateWithOthers\": false,\r\n  \"drankLiquid\": false,\r\n  \"wasTasty\": true, \r\n  \"wasHealthy\": true\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/meals",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add 2nd dates 201",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"date_id\", pm.response.json()[\"id\"]);",
+							"",
+							"pm.test(\"201 status code\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"date\"]).to.eq(\"11/15/21\");",
+							"    const self_url = pm.environment.get(\"app_url\") + \"dates/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"month\": 11,\r\n  \"day\": 15,\r\n  \"year\": 2021\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/dates",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT meals 204",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"204 status code\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"meal\": \"lunch\",\r\n  \"ateWithOthers\": false,\r\n  \"drankLiquid\": true,\r\n  \"wasTasty\": false, \r\n  \"wasHealthy\": true\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT meals 403 - id included",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"403 status code\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"meal\": \"lunch\",\r\n  \"ateWithOthers\": false,\r\n  \"drankLiquid\": true,\r\n  \"wasTasty\": false, \r\n  \"wasHealthy\": true,\r\n  \"id\": 2222\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT meals 401 noAuth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"meal\": \"lunch\",\r\n  \"ateWithOthers\": false,\r\n  \"drankLiquid\": true,\r\n  \"wasTasty\": false, \r\n  \"wasHealthy\": true\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete meals noAuth 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete all meals 405",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"405 status code\", function () {",
+							"    pm.response.to.have.status(405);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{app_url}}/meals",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add meals with missing attributes 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"400 status code\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"400 error message\", function () {",
+							"     pm.expect(pm.response.json()[\"Error\"]).to.eq(\"The request object is missing at least one of the required attributes\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"meal\": \"breakfast\",\r\n  \"ateWithOthers\": false,\r\n  \"drankLiquid\": false,\r\n  \"wasTasty\": true\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/meals",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get meals with invalid id 404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"404 not found\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"",
+							"pm.test(\"404 error message\", function () {",
+							"     pm.expect(pm.response.json()[\"Error\"]).to.eq(\"No object with this id exists\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{invalid_date_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{invalid_date_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get specific meals 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"meal\"]).to.eq(\"lunch\");",
+							"    const self_url = pm.environment.get(\"app_url\") + \"meals/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get specific meals 401 noAuth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all meals 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"At least one date exists\", function(){",
+							"   pm.expect(Object.keys(pm.response.json()).length).to.be.at.least(1);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all meals 406 - unsupported MIME type",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"406 status code\", function () {",
+							"    pm.response.to.have.status(406);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all meals 200 check pagination",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"At least one date exists\", function(){",
+							"   pm.expect(Object.keys(pm.response.json()).length).to.be.at.least(1);",
+							"   const next_url = pm.environment.get(\"app_url\") + \"meals?limit=5&offset=5\";",
+							"   pm.expect(pm.response.json()[\"next\"]).to.eq(next_url);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete meals 201",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"204 status code\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add 2nd meals 201",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"meal_id\", pm.response.json()[\"id\"]);",
+							"",
+							"pm.test(\"201 status code\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"meal\"]).to.eq(\"breakfast\");",
+							"    pm.expect(pm.response.json()[\"ateWithOthers\"]).to.eq(false);",
+							"    pm.expect(pm.response.json()[\"drankLiquid\"]).to.eq(false);",
+							"    pm.expect(pm.response.json()[\"wasTasty\"]).to.eq(true);",
+							"    pm.expect(pm.response.json()[\"wasHealthy\"]).to.eq(true);",
+							"    const self_url = pm.environment.get(\"app_url\") + \"meals/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"meal\": \"breakfast\",\r\n  \"ateWithOthers\": false,\r\n  \"drankLiquid\": false,\r\n  \"wasTasty\": true, \r\n  \"wasHealthy\": true\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/meals",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add foods 201",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"food_id\", pm.response.json()[\"id\"]);",
+							"",
+							"pm.test(\"201 status code\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"food\"]).to.eq(\"chicken breast\");",
+							"    const self_url = pm.environment.get(\"app_url\") + \"foods/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"food\": \"chicken breast\",\r\n  \"amount\": 250,\r\n  \"units\": \"grams\"\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/foods",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"foods"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add foods 201 noAuth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"201 status code\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"food\": \"chicken breast\",\r\n  \"amount\": 250,\r\n  \"units\": \"grams\"\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/foods",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"foods"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add 2nd foods 201",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"food_id_1\", pm.response.json()[\"id\"]);",
+							"",
+							"pm.test(\"201 status code\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"food\"]).to.eq(\"watermelon\");",
+							"    const self_url = pm.environment.get(\"app_url\") + \"foods/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"food\": \"watermelon\",\r\n  \"amount\": 800,\r\n  \"units\": \"grams\"\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/foods",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"foods"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT 2nd foods 204",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"204 status code\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"food\": \"peanut butter\",\r\n  \"amount\": 800,\r\n  \"units\": \"grams\"\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/foods/{{food_id_1}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"foods",
+						"{{food_id_1}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT 2nd foods 403 - id included",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"403 status code\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"food\": \"peanut butter\",\r\n  \"amount\": 800,\r\n  \"units\": \"grams\",\r\n  \"id\": 222\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/foods/{{food_id_1}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"foods",
+						"{{food_id_1}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT 2nd foods 401 noAuth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"food\": \"peanut butter\",\r\n  \"amount\": 800,\r\n  \"units\": \"grams\"\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/foods/{{food_id_1}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"foods",
+						"{{food_id_1}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add foods with missing attributes 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"400 status code\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"400 error message\", function () {",
+							"     pm.expect(pm.response.json()[\"Error\"]).to.eq(\"The request object is missing at least one of the required attributes\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"food\": \"chicken breast\",\r\n  \"amount\": 150\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/foods",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"foods"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login and grab another user's JWT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"id_token_1\", pm.response.json()[\"id_token\"]);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"{{user_id_2}}\",\r\n    \"password\": \"{{user_id_2}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{app_url}}/logintest",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"logintest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT 2nd foods w/ another user's JWT 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{id_token_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"food\": \"peanut butter\",\r\n  \"amount\": 800,\r\n  \"units\": \"grams\"\r\n}"
+				},
+				"url": {
+					"raw": "{{app_url}}/foods/{{food_id_1}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"foods",
+						"{{food_id_1}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get specific foods 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"food\"]).to.eq(\"chicken breast\");",
+							"    const self_url = pm.environment.get(\"app_url\") + \"foods/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/foods/{{food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"foods",
+						"{{food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get specific foods without auth 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/foods/{{food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"foods",
+						"{{food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "bad token get specific food 401",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "badToken",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://fitnesstracker-332400.wl.r.appspot.com/foods/{{food_id}}",
+					"protocol": "https",
+					"host": [
+						"fitnesstracker-332400",
+						"wl",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"foods",
+						"{{food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get foods with invalid id 404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"404 not found\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"",
+							"pm.test(\"404 error message\", function () {",
+							"     pm.expect(pm.response.json()[\"Error\"]).to.eq(\"No object with this id exists\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/foods/{{invalid_food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"foods",
+						"{{invalid_food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all foods 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"At least one date exists\", function(){",
+							"   pm.expect(Object.keys(pm.response.json()).length).to.be.at.least(1);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/foods",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"foods"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all foods 200 check pagination",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"At least one date exists\", function(){",
+							"   pm.expect(Object.keys(pm.response.json()).length).to.be.at.least(1);",
+							"   const next_url = pm.environment.get(\"app_url\") + \"foods?limit=5&offset=5\";",
+							"   pm.expect(pm.response.json()[\"next\"]).to.eq(next_url);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/foods",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"foods"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "assign food to meal 401 noAuth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}/{{food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}",
+						"{{food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "assign food to meal 401 different user's auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{id_token_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}/{{food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}",
+						"{{food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "assign food to meal 401 invalid JWT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{id_token_invalid}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}/{{food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}",
+						"{{food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "assign food to meal 204",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"204 status code\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}/{{food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}",
+						"{{food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all foods for the meal 200 Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"At least one food exists\", function(){",
+							"   pm.expect(pm.response.json()[\"foods\"].length).to.be.at.least(1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}/foods",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}",
+						"foods"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "assign meal to date 401 noAuth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}",
+						"{{meal_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "assign meal to date 401 different user's auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{id_token_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}",
+						"{{meal_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "assign meal to date 401 invalid JWT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{id_token_invalid}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}",
+						"{{meal_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "assign meal to date 204",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"204 status code\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}",
+						"{{meal_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get specific meals 200 Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"meal\"]).to.eq(\"breakfast\");",
+							"    pm.expect(pm.response.json()[\"ateWithOthers\"]).to.eq(false);",
+							"    pm.expect(pm.response.json()[\"drankLiquid\"]).to.eq(false);",
+							"    pm.expect(pm.response.json()[\"wasTasty\"]).to.eq(true);",
+							"    pm.expect(pm.response.json()[\"wasHealthy\"]).to.eq(true);",
+							"    const self_url = pm.environment.get(\"app_url\") + \"meals/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get specific dates 200 Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"date\"]).to.eq(\"11/15/21\");",
+							"    const self_url = pm.environment.get(\"app_url\") + \"dates/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "assign food to meal 204 Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"204 status code\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}/{{food_id_1}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}",
+						"{{food_id_1}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all foods for the meal 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"At least one food exists\", function(){",
+							"   pm.expect(pm.response.json()[\"foods\"].length).to.be.at.least(1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}/foods",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}",
+						"foods"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get specific meals 200 Copy 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"meal\"]).to.eq(\"breakfast\");",
+							"    const self_url = pm.environment.get(\"app_url\") + \"meals/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get specific dates 200 Copy 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"date\"]).to.eq(\"11/15/21\");",
+							"    const self_url = pm.environment.get(\"app_url\") + \"dates/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "invalid meal id assigned to food 404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"404 status code\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"",
+							"pm.test(\"404 error message\", function () {",
+							"     pm.expect(pm.response.json()[\"Error\"]).to.eq(\"No object with this id exists\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{invalid_meal_id}}/{{food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{invalid_meal_id}}",
+						"{{food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "invalid food id assigned to meal 404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"404 status code\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"",
+							"pm.test(\"404 error message\", function () {",
+							"     pm.expect(pm.response.json()[\"Error\"]).to.eq(\"No object with this id exists\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}/{{invalid_food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}",
+						"{{invalid_food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "invalid boat arrives at invalid slip 404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"404 status code\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"",
+							"pm.test(\"404 error message\", function () {",
+							"     pm.expect(pm.response.json()[\"Error\"]).to.eq(\"No object with this id exists\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{invalid_meal_id}}/{{invalid_food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{invalid_meal_id}}",
+						"{{invalid_food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "check meal contains new food_id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"foods\"].length).to.not.eq(0);",
+							"    const self_url = pm.environment.get(\"app_url\") + \"meals/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove food from meal 401 noAuth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}/{{food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}",
+						"{{food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove food from meal 401 differnt user's auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{id_token_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}/{{food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}",
+						"{{food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove food from meal 401 invalid JWT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{id_token_invalid}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}/{{food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}",
+						"{{food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove food from meal 204",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"204 status code\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}/{{food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}",
+						"{{food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get specific foods 200 Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"food\"]).to.eq(\"chicken breast\");",
+							"    const self_url = pm.environment.get(\"app_url\") + \"foods/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/foods/{{food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"foods",
+						"{{food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get specific meals 200 Copy 3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"meal\"]).to.eq(\"breakfast\");",
+							"    const self_url = pm.environment.get(\"app_url\") + \"meals/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get specific dates 200 Copy 3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"date\"]).to.eq(\"11/15/21\");",
+							"    const self_url = pm.environment.get(\"app_url\") + \"dates/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove meal from date 401 noAuth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}",
+						"{{meal_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove meal from date 401 invalid JWT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{id_token_invalid}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}",
+						"{{meal_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove meal from date 401 different user's auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"401 status code\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{id_token_1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}",
+						"{{meal_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove meal from date 204",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"204 status code\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}",
+						"{{meal_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get specific foods 200 Copy 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"food\"]).to.eq(\"chicken breast\");",
+							"    const self_url = pm.environment.get(\"app_url\") + \"foods/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/foods/{{food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"foods",
+						"{{food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get specific meals 200 Copy 4",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"meal\"]).to.eq(\"breakfast\");",
+							"    const self_url = pm.environment.get(\"app_url\") + \"meals/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get specific dates 200 Copy 4",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"content is valid\", function () {",
+							"    pm.expect(pm.response.json()[\"date\"]).to.eq(\"11/15/21\");",
+							"    const self_url = pm.environment.get(\"app_url\") + \"dates/\" + pm.response.json()[\"id\"];",
+							"    pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all foods for the meal 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}/foods",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}",
+						"foods"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all dates for the meal 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}/dates",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}",
+						"dates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all meals for the date 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates/{{date_id}}/meals",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{date_id}}",
+						"meals"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all meals for the foods 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"200 status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/foods/{{food_id}}/meals",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"foods",
+						"{{food_id}}",
+						"meals"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "meal without food, tries to remove food 404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"404 status code\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"",
+							"pm.test(\"404 error message\", function () {",
+							"     pm.expect(pm.response.json()[\"Error\"]).to.eq(\"These two objects aren't associated with one another\");",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{meal_id}}/{{food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{meal_id}}",
+						"{{food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove food from invalid meal 404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"404 status code\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"",
+							"pm.test(\"404 error message\", function () {",
+							"     pm.expect(pm.response.json()[\"Error\"]).to.eq(\"No object with this id exists\");",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{invalid_meal_id}}/{{food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{invalid_meal_id}}",
+						"{{food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete food with invalid id 404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"404 not found\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"",
+							"pm.test(\"404 error message\", function () {",
+							"     pm.expect(pm.response.json()[\"Error\"]).to.eq(\"No object with this id exists\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/foods/{{invalid_food_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"foods",
+						"{{invalid_food_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete meal with invalid id 404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"404 not found\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"",
+							"pm.test(\"404 error message\", function () {",
+							"     pm.expect(pm.response.json()[\"Error\"]).to.eq(\"No object with this id exists\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/meals/{{invalid_meal_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"meals",
+						"{{invalid_meal_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete date with invalid id 404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"404 not found\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"",
+							"pm.test(\"404 error message\", function () {",
+							"     pm.expect(pm.response.json()[\"Error\"]).to.eq(\"No object with this id exists\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{app_url}}/dates/{{invalid_date_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"dates",
+						"{{invalid_date_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "decode token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"content is valid\", function () {\r",
+							"    pm.expect(pm.response.json()[\"nickname\"]).to.eq(\"test\");\r",
+							"    pm.expect(pm.response.json()[\"name\"]).to.eq(\"test@123.com\");\r",
+							"    pm.expect(pm.response.json()[\"sub\"]).to.eq(\"auth0|61949d6ca9ee10007182278c\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIiwiaXNzIjoiaHR0cHM6Ly9hc3M3YXV0aGVudGljYXRlbmF1dGhvcml6YXRpb24udXMuYXV0aDAuY29tLyJ9..6KtWd-qSH_9dWMbi.G2M-R6BfFOk8Sqj3LpMOKP3QQn13mDc4JM4edZ0YTgO9-FBZ2z3OsWn6wTamQh1-usnYKiQj_4J9wkUEZMTZ89xg5o4HEiwswkrVySKktK2j6r2ppx3OXivYGd4VLsHmOc3eoUSj-jXbshsKg-4Iri4zot-F0mXPXBDAZ3qFRkLouxtyfsOe_8GFd631Kfo3SAyGj9aE6d8ZaXiAciRVTMbawRMIXRJpRfUC_ee_79rctmOr4s1hb2HZc0y798LujnWvBMa1vqeZYoy7S8lZltP7v0b7YNoaVe_b2Ofi5yNjZfIIKVGI7eWY52JvuosMAPNF1xFjGcLWePSoMNEnLNABFJ91VcdN9P0LsosNa3MwJ0qzv7U_S6MrSlINCsqjWJHwMzdAY6IrV4fSawiaVUQzvZ-Q.QCb2-k9ekjW9vqt2Zu6ZGw",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{app_url}}/decode",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"decode"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{app_url}}/users",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{id_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "{{id_token}}",
+			"value": ""
+		}
+	]
+}
